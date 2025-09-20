@@ -1,0 +1,36 @@
+# Local profile configuration
+# These values read from environment variables. On macOS/Windows, use IDE Run Configuration
+# "Environment variables" to pass MYSQL_* or DB_* if needed.
+# Do NOT use MYSQL_ROOT_PASSWORD in application; it is only for the MySQL container.
+# Keep ddl-auto=none; schema will be managed in a later stage.
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: "jdbc:mysql://${MYSQL_HOST:${DB_HOST:127.0.0.1}}:${MYSQL_PORT:${DB_PORT:3306}}/${MYSQL_DB:${DB_NAME:lms}}?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_0900_ai_ci&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false"
+    username: "${MYSQL_USER:${DB_USER:lms_user}}"
+    password: "${MYSQL_PASSWORD:${DB_PASSWORD:lms_password123}}"
+    hikari:
+      pool-name: LmsHikariPool
+      minimum-idle: 2
+      maximum-pool-size: 10
+      idle-timeout: 600000
+      connection-timeout: 30000
+      validation-timeout: 5000
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.MySQLDialect
+  sql:
+    init:
+      mode: never
+logging:
+  level:
+    org.hibernate.SQL: warn
+    org.springframework: info
+server:
+  port: 8080

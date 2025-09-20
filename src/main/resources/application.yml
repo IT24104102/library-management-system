@@ -1,0 +1,9 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: lms-backend
+  # Database settings are in application-local.yml (activate with: --spring.profiles.active=local)
