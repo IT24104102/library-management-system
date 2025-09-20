@@ -1,2 +1,28 @@
-/mvnw text eol=lf
-*.cmd text eol=crlf
+# Normalize text files and ensure consistent line endings
+* text=auto eol=lf
+
+# Treat archives/binaries correctly
+*.jar binary
+*.zip binary
+*.png binary
+*.jpg binary
+*.gif binary
+
+# Scripts
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# Common code/text formats
+*.java text eol=lf
+*.kt text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.properties text eol=lf
+*.sql text eol=lf
+
+# GitHub linguist hints (optional, non-blocking)
+docs/** linguist-documentation
+src/main/resources/static/** linguist-vendored
+

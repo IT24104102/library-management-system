@@ -181,3 +181,13 @@ On successful boot you should see a checklist in logs similar to:
 - Non-functional: basic security (BCrypt), simple and maintainable, local scale.
 - Limitations: single branch, local DB, basic encryption, no pen-test, no mobile app.
 - Next steps: wire repositories/services, controllers, and UI pages incrementally.
+
+## Repo & Branches
+
+- Default branches: `main` (stable), `dev` (integration), `feature/*` (task branches)
+- Create a feature branch:
+  - `git checkout -b feature/<short-task-name>`
+- Open a PR:
+  - Target branch: `dev`
+  - Keep PRs small; link the task/issue ID; ensure CI passes
+- See CONTRIBUTING for details: [CONTRIBUTING.md](CONTRIBUTING.md)

@@ -34,3 +34,53 @@ build/
 
 # Local compose env
 infra/.env
+
+# Build artifacts
+/target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse/STS caches
+.apt_generated/
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Java
+*.class
+*.log
+hs_err_pid*
+replay_pid*
+
+# Maven Wrapper
+.mvn/wrapper/maven-wrapper.jar
+
+# Spring Boot
+*.pid
+
+# Docker / Infra
+infra/.env
+!infra/.env.example
+
+# Logs
+logs/
+*.log
+
+# Node/yarn (if any future UI assets)
+node_modules/
