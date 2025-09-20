@@ -6,6 +6,6 @@ public enum Role {
     ASSISTANT,
     STUDENT,
     IT_SUPPORT,
-    CHIEF_LIBRARIAN
+    CHIEF_LIBRARIAN,
+    ACADEMIC_COORD
 }
-

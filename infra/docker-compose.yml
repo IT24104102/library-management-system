@@ -2,10 +2,11 @@ version: '3.8'
 
 services:
   mysql:
-    image: mysql:8
+    image: mysql:8.0
+    container_name: lms-mysql
     restart: unless-stopped
     ports:
-      - "${MYSQL_PORT}:3306"
+      - "${MYSQL_PORT:-3307}:3306"
     env_file:
       - ./.env
     environment:

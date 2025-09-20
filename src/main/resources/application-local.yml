@@ -1,15 +1,11 @@
-# Local profile configuration
-# These values read from environment variables. On macOS/Windows, use IDE Run Configuration
-# "Environment variables" to pass MYSQL_* or DB_* if needed.
-# Do NOT use MYSQL_ROOT_PASSWORD in application; it is only for the MySQL container.
-# Keep ddl-auto=none; schema will be managed in a later stage.
+# Local profile configuration (uses env variables)
 
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: "jdbc:mysql://${MYSQL_HOST:${DB_HOST:127.0.0.1}}:${MYSQL_PORT:${DB_PORT:3306}}/${MYSQL_DB:${DB_NAME:lms}}?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_0900_ai_ci&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false"
-    username: "${MYSQL_USER:${DB_USER:lms_user}}"
-    password: "${MYSQL_PASSWORD:${DB_PASSWORD:lms_password123}}"
+    url: "jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3307}/${MYSQL_DB:lms}?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_0900_ai_ci&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false"
+    username: ${MYSQL_USER:lms_user}
+    password: ${MYSQL_PASSWORD:lms_password123}
     hikari:
       pool-name: LmsHikariPool
       minimum-idle: 2
@@ -24,13 +20,18 @@ spring:
     properties:
       hibernate:
         format_sql: false
-        dialect: org.hibernate.dialect.MySQLDialect
   sql:
     init:
       mode: never
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+    baseline-on-migrate: true
+    baseline-version: 0
 logging:
   level:
     org.hibernate.SQL: warn
     org.springframework: info
 server:
-  port: 8080
+  port: ${SERVER_PORT:8081}

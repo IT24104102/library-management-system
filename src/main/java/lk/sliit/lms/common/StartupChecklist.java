@@ -6,25 +6,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class StartupChecklist implements ApplicationRunner {
     private static final Logger log = LoggerFactory.getLogger(StartupChecklist.class);
 
     private final Environment env;
-    private final UserDetailsService userDetailsService;
 
-    @Value("${server.port:8080}")
+    @Value("${server.port:8081}")
     private int serverPort;
 
-    public StartupChecklist(Environment env, UserDetailsService userDetailsService) {
+    public StartupChecklist(Environment env) {
         this.env = env;
-        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -33,36 +29,25 @@ public class StartupChecklist implements ApplicationRunner {
         if (profiles.length == 0) profiles = env.getDefaultProfiles();
         String activeProfile = profiles.length > 0 ? profiles[0] : "default";
 
-        // Resolve DB settings from environment (no secrets)
-        String dbHost = firstNonEmpty(
-            env.getProperty("MYSQL_HOST"),
-            env.getProperty("DB_HOST"),
-            "127.0.0.1"
-        );
-        String dbPort = firstNonEmpty(
-            env.getProperty("MYSQL_PORT"),
-            env.getProperty("DB_PORT"),
-            "3306"
-        );
-        String dbName = firstNonEmpty(
-            env.getProperty("MYSQL_DB"),
-            env.getProperty("DB_NAME"),
-            "lms"
-        );
+        String dbHost = firstNonEmpty(env.getProperty("MYSQL_HOST"), "127.0.0.1");
+        String dbPort = firstNonEmpty(env.getProperty("MYSQL_PORT"), "3307");
+        String dbName = firstNonEmpty(env.getProperty("MYSQL_DB"), "lms");
 
-        List<String> expectedUsers = List.of("admin","librarian","assistant","student","itsupport","chief");
-        long loadedCount = expectedUsers.stream().filter(u -> {
-            try { userDetailsService.loadUserByUsername(u); return true; } catch (Exception e) { return false; }
-        }).count();
+        if ("local".equalsIgnoreCase(activeProfile)) {
+            log.info("LMS started (profile=local, DB={}@{}:{}, PORT={})", dbName, dbHost, dbPort, serverPort);
+            String jdbcUrl = String.format(
+                "jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_0900_ai_ci&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false",
+                dbHost, dbPort, dbName
+            );
+            log.info("[Datasource] JDBC URL: {}", jdbcUrl);
+        } else {
+            log.info("LMS started (profile={}, DB={}@{}:{})", activeProfile, dbName, dbHost, dbPort);
+        }
 
-        // Clear banner
-        log.info("LMS started on profile: {} — DB: {}@{}:{}", activeProfile, dbName, dbHost, dbPort);
-
-        // Detailed checklist
         log.info("================ LMS Backend Startup Checklist ================");
         log.info("[Profiles] active={} (expect: local)", Arrays.toString(profiles));
         log.info("[Server] http://localhost:{}", serverPort);
-        log.info("[Security] In-memory RBAC users loaded: {}/6 (admin, librarian, assistant, student, itsupport, chief)", loadedCount);
+        log.info("[Security] Session form login; CSRF DISABLED for demo; simple RBAC");
         log.info("[JPA Entities] User, Book, Loan, Reservation, Fine, AuditLog present (placeholders)");
         log.info("[Config] JSP support added (tomcat-embed-jasper, JSTL)");
         log.info("[Datasource] Using env vars MYSQL_HOST/PORT/DB/USER/PASSWORD (ddl-auto=none)");
@@ -70,9 +55,7 @@ public class StartupChecklist implements ApplicationRunner {
         log.info("===============================================================");
     }
 
-    private static String firstNonEmpty(String a, String b, String fallback) {
-        if (a != null && !a.isBlank()) return a;
-        if (b != null && !b.isBlank()) return b;
-        return fallback;
+    private static String firstNonEmpty(String a, String fallback) {
+        return (a != null && !a.isBlank()) ? a : fallback;
     }
 }
